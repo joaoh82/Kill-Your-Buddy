@@ -9,6 +9,11 @@
 #ifndef __GAME_CONFIG_H
 #define __GAME_CONFIG_H
 
+#define LIFES 3
+#define STRONG_MONSTER_POINTS 10
+#define WEEK_MONSTER_POINTS 10
+#define LOST_BULLET_LOSS 2
+
 //
 // Supported Autorotations:
 //		None,

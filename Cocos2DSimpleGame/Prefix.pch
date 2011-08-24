@@ -11,4 +11,9 @@
 #ifdef __OBJC__
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import "GameConfig.h"
+#import "cocos2d.h"
+#import "MenuManager.h"
+#import "SimpleAudioEngine.h"
+#import "Common.h"
 #endif

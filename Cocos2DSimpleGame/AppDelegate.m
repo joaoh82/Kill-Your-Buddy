@@ -10,12 +10,18 @@
 
 #import "AppDelegate.h"
 #import "GameConfig.h"
-#import "HelloWorldLayer.h"
+#import "PrimeiraFaseLayer.h"
+#import "MenuManager.h"
 #import "RootViewController.h"
 
 @implementation AppDelegate
 
 @synthesize window;
+@synthesize _pointMade;
+@synthesize _player;
+@synthesize soundGame;
+@synthesize gamePaused;
+
 
 - (void) removeStartupFlicker
 {
@@ -38,8 +44,35 @@
 	
 #endif // GAME_AUTOROTATION == kGameAutorotationUIViewController	
 }
+
+/**
+ REGISTRA A APLICAÇÃO PARA PUSH NOTIFICATION E RECEBE O TOKEN
+ */
+-(void)loadDefaults
+{
+	// initialize defaults
+	NSString *dateKey    = @"dateKey";
+	NSDate *lastRead    = (NSDate *)[[NSUserDefaults standardUserDefaults] objectForKey:dateKey];
+	if (lastRead == nil)     // App first run: set up user defaults.
+	{
+		NSDictionary *appDefaults  = [NSDictionary dictionaryWithObjectsAndKeys:[NSDate date], dateKey, nil];
+        
+        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"bestScore"];
+		
+		// sync the defaults to disk
+		[[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+	}
+	[[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:dateKey];
+    
+}
+
 - (void) applicationDidFinishLaunching:(UIApplication*)application
 {
+    [self loadDefaults];
+    
+    soundGame = YES;
+    gamePaused = NO;
 	// Init the window
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
@@ -89,7 +122,7 @@
 #endif
 	
 	[director setAnimationInterval:1.0/60];
-	[director setDisplayFPS:YES];
+	[director setDisplayFPS:NO];
 	
 	
 	// make the OpenGLView a child of the view controller
@@ -110,7 +143,16 @@
 	[self removeStartupFlicker];
 	
 	// Run the intro Scene
-	[[CCDirector sharedDirector] runWithScene: [HelloWorldLayer scene]];
+	//[[CCDirector sharedDirector] runWithScene: [PrimeiraFaseLayer scene]];
+    [MenuManager goMenu];
+    
+    
+    
+    
+}
+
+-(void)validateFacebook{
+    
 }
 
 
@@ -123,6 +165,7 @@
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+    [[CCTextureCache sharedTextureCache] removeUnusedTextures];
 	[[CCDirector sharedDirector] purgeCachedData];
 }
 
@@ -156,4 +199,12 @@
 	[super dealloc];
 }
 
+@end
+
+@implementation UIViewController (KillYourBuddy)
+- (AppDelegate *)appDelegate
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    return appDelegate;
+}
 @end
